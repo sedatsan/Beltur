@@ -52,3 +52,7 @@ Beltur/
 ## How we work
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE)

@@ -26,6 +26,15 @@ gh pr create --fill
 - We squash-merge, so each PR becomes one commit on `main`. Merged branches are deleted automatically.
 - If you're both editing the same files, say so in chat before you start.
 
+## Prelint
+
+[Prelint](https://prelint.com) reviews every PR against our specs and decisions.
+It reads the Markdown files in the repo, so put product specs and decisions in `docs/`.
+
+The repo's `.mcp.json` connects Claude Code to Prelint's MCP server, so the agent can
+check our decisions while it writes code. The first time you open the project in Claude Code,
+approve the `prelint` server, then run `/mcp` → **prelint** → sign in with your own Prelint account.
+
 ## Commits
 
 Write short, imperative messages: `Add login screen`, `Fix crash on rotate`.
