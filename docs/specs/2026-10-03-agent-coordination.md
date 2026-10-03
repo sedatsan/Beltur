@@ -18,19 +18,21 @@ Two people work only by prompting their agents. The agents must coordinate witho
 
 ## 2. Rule boundaries (hard limits)
 
-These come from the Huawei Challenge Rules (summarised in our own words in `docs/challenge-rules.md`) and from `AGENTS.md`. They override every other instruction. No agent may bypass them, whatever the reason.
+These come from the Huawei Challenge Rules, the published challenge brief (both summarised in our own words in `docs/challenge-rules.md`) and `AGENTS.md`. They override every other instruction. No agent may bypass them, whatever the reason.
 
 | # | Boundary | Source |
 |---|----------|--------|
-| R1 | The solution must be built during the challenge (3–4 Oct 2026). Before the detailed brief is published, agents set up workflow and tooling only, with no product features. Everything prepared before the brief is listed as pre-existing in `docs/AI_USAGE.md`. | Challenge rules §4 |
-| R2 | Every AI tool used (Claude Code, Antigravity/Gemini, Prelint) and every pre-existing or third-party component is recorded in `docs/AI_USAGE.md`, in the same PR that introduces it. | Challenge rules §4 |
+| R1 | The solution must be built during the challenge (3–4 Oct 2026). The brief was published on 3 Oct 2026. Everything made before it (repo setup, this coordination system) is listed as pre-existing in `AI_WORKFLOW.md`. | Challenge rules §4 |
+| R2 | `AI_WORKFLOW.md` (repo root, required by the brief) records every AI model, coding agent, MCP server, Agent Skill and AI tool used, the main prompts and reusable instructions, the workflow, how output was reviewed and validated, limitations and lessons learned, and every pre-existing or third-party component. Each PR adds its own entry. No API keys, credentials or personal data in it. | Challenge rules §4, brief "Use of AI" |
 | R3 | Third-party libraries, code, assets, icons and fonts may be added only if their licence allows it. Record name, source and licence. Nothing of unknown origin. | Challenge rules §4, §7 |
 | R4 | English only: code, comments, UI text, docs, commits, PRs, demo, pitch. | Challenge rules §4, `AGENTS.md` |
 | R5 | No false or misleading information. Never present a mocked or simulated feature as real in the app, README, demo or pitch: label mocks. Never fabricate results, test output or metrics. | Challenge rules §8, `AGENTS.md` §0 |
 | R6 | Everything is merged and submitted before the official deadline (recorded in `AGENTS.md` once announced). Feature freeze 4 hours before it. | Challenge rules §4 |
-| R7 | Do not commit Huawei's `RULES.pdf` or other third-party documents. Summarise in our own words. | Challenge rules §7 |
+| R7 | Do not commit Huawei's `RULES.pdf`, the criteria PDF or other third-party documents. Summarise in our own words. | Challenge rules §7 |
 | R8 | No direct pushes to `main` (enforced by a GitHub ruleset that requires a PR), no force-pushes, no secrets, signing files or build artifacts. | `AGENTS.md` |
 | R9 | **Never bypass a block.** If a rule, permission prompt, hook, branch protection, failing check or missing access stops you, stop and report to your human. Never work around it: no `--force`, `--no-verify`, `--admin`, disabling checks, `--dangerously-skip-permissions`, or editing the rules to allow yourself. | User instruction |
+| R10 | Target HarmonyOS/OpenHarmony **API 20 or later** and declare API 20 as the minimum. The app must build to a `.hap` and run on an emulator or device. Setup, build, install and launch steps in the README must let a stranger reproduce it. | Brief "Technical Requirements" |
+| R11 | Hygiene the jury checks: request only the permissions the feature needs, no risky or unmaintained dependencies, validate input, handle API errors, timeouts, missing data and bad model output, and add tests for the key scenarios. | Brief "Technical execution" |
 
 ## 3. Agents and roles
 
@@ -44,7 +46,7 @@ These come from the Huawei Challenge Rules (summarised in our own words in `docs
 
 The two roles follow the split agreed earlier:
 - **app:** ArkUI screens, navigation, state, visual polish, resources.
-- **platform:** services, data, HarmonyOS kits, specs, pitch material. Keeps `docs/AI_USAGE.md` tidy; every agent adds its own entries.
+- **platform:** services, data, HarmonyOS kits, specs, pitch material. Keeps `AI_WORKFLOW.md` tidy; every agent adds its own entries.
 
 ## 4. Task model
 
@@ -78,7 +80,7 @@ A task is a GitHub issue in `sedatsan/Beltur`, using the Task template (Goal, Do
 | app | `entry/src/main/ets/pages/`, `entry/src/main/ets/components/`, `entry/src/main/resources/` |
 | platform | `entry/src/main/ets/services/`, `entry/src/main/ets/model/`, `docs/` |
 | shared | `entry/src/main/ets/contracts/`, `entry/src/main/module.json5`, `AppScope/`, `oh-package.json5`, `build-profile.json5`, `hvigorfile.ts`, `AGENTS.md`, `.claude/` |
-| any agent (append only) | `docs/AI_USAGE.md`: each PR adds its own entries (R2) |
+| any agent (append only) | `AI_WORKFLOW.md`: each PR adds its own entries (R2) |
 
 **Shared files change only through a dedicated small PR.** The PR is labelled `contract` (for interfaces) or `chore` (for config), contains nothing else, and is merged as soon as it builds. The other side sees it at its next `/sync`.
 
@@ -111,7 +113,7 @@ Every step is written in plain text in `AGENTS.md`, so any agent can follow it. 
 ### `/ship` (safe to run again; it continues where it stopped)
 1. Merge `origin/main` into my branch. Resolve conflicts only inside my own folders. If a conflict touches the other role's files, stop and report.
 2. Verify: build with `hvigorw assembleHap` once the project exists, plus any tests. If verification cannot run, say so in the PR. Never claim it builds without running it (R5).
-3. Update `docs/AI_USAGE.md` if a new tool, dependency or asset was used (R2, R3).
+3. Add this PR's entry to `AI_WORKFLOW.md`: agent, main prompt, how the output was verified, plus any new tool, dependency or asset (R2, R3).
 4. Push the branch and open a PR: `Closes #N`, files touched, contract changes (yes/no), how it was verified.
 5. Merge with `gh pr merge --squash --delete-branch` only when:
    - the PR has no conflicts
@@ -127,7 +129,7 @@ Every step is written in plain text in `AGENTS.md`, so any agent can follow it. 
 3. Prepare Antigravity's worktree: `git worktree add ../Beltur-agy -b agy/<N>-<slug> origin/main` (or reuse the worktree with a fresh branch).
 4. Run Antigravity headless inside that worktree:
    `agy -p "<prompt>" --mode accept-edits --sandbox`
-   The prompt contains the issue goal, the Done-when checks, the file allowlist, the rule boundaries R1–R9, and these limits: commit only on `agy/<N>-<slug>`, never push, never use `gh`, never touch files outside the allowlist.
+   The prompt contains the issue goal, the Done-when checks, the file allowlist, the rule boundaries R1–R11, and these limits: commit only on `agy/<N>-<slug>`, never push, never use `gh`, never touch files outside the allowlist.
 5. Review the whole diff (`git diff origin/main...agy/<N>-<slug>`). Reject any change outside the allowlist, any rule breach, and anything unverified.
 6. If it is accepted, Sedat's Claude runs `/ship` for that branch: push, PR, merge, and an AI usage entry crediting Antigravity. If it is rejected twice, Sedat's Claude does the task itself.
 
@@ -145,13 +147,13 @@ Every step is written in plain text in `AGENTS.md`, so any agent can follow it. 
 
 | File | Change |
 |------|--------|
-| `AGENTS.md` | Add: Team & roles table, Rule boundaries (R1–R9), Coordination routine (section 6 in plain text), Antigravity limits. Mark the Obsidian log as personal. Keep the existing content. |
+| `AGENTS.md` | Fix the stack section to API 20+. Add: Team & roles table, Rule boundaries (R1–R11), Coordination routine (section 6 in plain text), Antigravity limits. Mark the Obsidian log as personal. Keep the existing content. |
 | `CLAUDE.md` | Replace the link with `@AGENTS.md` so Claude Code actually loads it. |
 | `GEMINI.md` | Same, `@AGENTS.md`. |
 | `.claude/commands/{sync,next-task,request,ship,delegate}.md` | Slash commands that run section 6. |
-| `docs/challenge-rules.md` | Summary of the Huawei rules in our own words, including the scoring weights. |
-| `docs/AI_USAGE.md` | Disclosure log: tools, pre-existing work (everything done before the brief), third-party components with licences, per-PR AI contributions. |
-| `.gitignore` | Add `RULES.pdf`. |
+| `docs/challenge-rules.md` | Summary in our own words of the Huawei rules and the challenge brief: challenge areas, technical requirements, required deliverables, scoring weights and what the jury checks. |
+| `AI_WORKFLOW.md` | Required by the brief. Tools, reusable instructions and config, workflow, review and validation, pre-existing work, third-party components, per-PR prompt and contribution log, limitations and lessons learned. |
+| `.gitignore` | Add `RULES.pdf` and `CRITERIA*.pdf`. |
 | `CONTRIBUTING.md`, `README.md` | Point to `AGENTS.md` for the agent workflow. Add a short "Development workflow" section to the README (transparency criterion). |
 | GitHub | Create the labels from section 4. Extend the `main` ruleset to require a pull request (0 approvals) so R8 is enforced, not just written down. |
 
@@ -170,6 +172,6 @@ A task-board website, syncing with Obsidian, CI pipelines, size estimates, miles
 ## 11. Open items (do not block the build)
 
 - Which human takes `app` and which takes `platform`.
-- The teammate's GitHub login and their collaborator invite.
+- ~~The teammate's GitHub login~~: `yeet30`, has write access.
 - The official submission deadline (added to `AGENTS.md` when announced).
 - Confirm that the Prelint GitHub app reviews PRs on `sedatsan/Beltur`.

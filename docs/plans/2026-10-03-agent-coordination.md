@@ -16,7 +16,8 @@
 - Commit subject under 72 characters, body explains why. No `Co-Authored-By: Claude` line (`AGENTS.md` §6).
 - Work on branch `docs/agent-coordination`. Never push to `main`. Merge only through a PR (R8).
 - Never bypass a block: no `--force`, `--no-verify`, `--admin`, `--dangerously-skip-permissions`, no editing rules to allow yourself (R9).
-- `RULES.pdf` is never committed (R7).
+- `RULES.pdf` and `CRITERIA Imagine What's Next.pdf` are never committed (R7).
+- Product code targets API 20 or later (R10). `AI_WORKFLOW.md` lives at the repo root (required name).
 - Antigravity runs only in `X:\Beltur-agy`, always with `--sandbox`, never pushes or uses `gh`.
 - Team table values: `sedatsan` = Sedat, role `TBD`. `yeet30` = teammate, role `TBD`. Prelint status: `not confirmed`.
 - Commands must work in Git Bash on Windows and in a macOS shell: no GNU-only flags such as `date -d`.
@@ -64,47 +65,54 @@ Expected: contains all nine labels from Interfaces.
 
 ---
 
-### Task 2: Rules summary, AI usage log, ignore RULES.pdf
+### Task 2: Rules summary, AI workflow log, ignore Huawei PDFs
 
 **Files:**
 - Create: `docs/challenge-rules.md`
-- Create: `docs/AI_USAGE.md`
-- Modify: `.gitignore` (append a `# --- Third-party documents (never commit) ---` block with `RULES.pdf`)
+- Create: `AI_WORKFLOW.md`
+- Modify: `.gitignore` (append a `# --- Third-party documents (never commit) ---` block with `RULES.pdf` and `CRITERIA*.pdf`)
 
 **Interfaces:**
-- Produces: `docs/AI_USAGE.md` with headings `## Tools`, `## Pre-existing work (before the brief)`, `## Third-party components`, `## Contributions by agent`. Later tasks and every future PR append to these.
+- Produces: `AI_WORKFLOW.md` with the 8 headings `## Tools`, `## Reusable instructions and configuration`, `## Workflow`, `## Review and validation`, `## Pre-existing work`, `## Third-party components`, `## Prompt and contribution log`, `## Limitations and lessons learned`. Later tasks and every future PR append to these.
 
 - [ ] **Step 1: Write the failing checks**
 
 ```bash
-git check-ignore -q RULES.pdf && echo IGNORED || echo NOT_IGNORED
-grep -c "20%" docs/challenge-rules.md
-grep -c "^## " docs/AI_USAGE.md
+git check-ignore -q RULES.pdf && git check-ignore -q "CRITERIA Imagine What's Next.pdf" && echo IGNORED || echo NOT_IGNORED
+grep -c -e "20%" -e "API 20" docs/challenge-rules.md
+grep -c "^## " AI_WORKFLOW.md
 ```
 Expected now: `NOT_IGNORED`, then "No such file" twice.
 
 - [ ] **Step 2: Write `docs/challenge-rules.md`**
 
-In our own words, no copied passages: organiser and dates (3–4 Oct 2026, Tauron Arena Kraków), objective, team size (up to 6), submission (English, before the deadline, may include description, slides, screenshots, demo, repo), AI and pre-existing work allowed if disclosed, the scoring table with all six weights, the 50% threshold, an IP summary (you keep ownership, winners grant Huawei a 3-year non-exclusive demo/promo licence, no commercial rights), disqualification grounds. End with "What this means for us": a mapping of R1–R7 to the rule sections.
+In our own words, no copied passages, covering both PDFs:
+- From the rules: organiser and dates (3–4 Oct 2026, Tauron Arena Kraków), team size (up to 6), English only, deadline, AI and pre-existing work allowed if disclosed, the 50% threshold, an IP summary (you keep ownership, winners grant Huawei a 3-year non-exclusive demo/promo licence, no commercial rights), disqualification grounds.
+- From the brief: the three challenge areas (Intelligent, Spatial, Human-Centric; combining them is a plus), technical requirements (ArkTS/ArkUI, C/C++ or RNOH; API 20 or later with API 20 as the minimum; runs on an emulator or device; reproducible setup; uses at least one platform capability), the 7 required deliverables, `AI_WORKFLOW.md` contents, and the scoring table with all six weights plus what the jury checks under each.
+- End with "What this means for us": a mapping of R1–R11 to the rule and brief sections.
 
-- [ ] **Step 3: Write `docs/AI_USAGE.md`**
+- [ ] **Step 3: Write `AI_WORKFLOW.md`**
 
-The four headings from Interfaces.
-- Tools: Claude Code (Anthropic), Antigravity (Google Gemini), Prelint.
+The 8 headings from Interfaces.
+- Tools: Claude Code (Anthropic, record the model ID for each person), Antigravity (Google Gemini, model from `agy models`), Prelint (MCP server in `.mcp.json` plus GitHub app), Agent Skills actually used (superpowers brainstorming and writing-plans).
+- Reusable instructions and configuration: links to `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.claude/commands/`, `.mcp.json`.
+- Workflow: ideation, spec, plan, issues, branch, PR, Prelint, merge (one paragraph).
+- Review and validation: lead agents review every diff, run the build and tests, Prelint reviews PRs, Antigravity output is reviewed in full before it leaves the machine.
 - Pre-existing work: the repo setup on 2026-10-03 before the brief. That covers README, CONTRIBUTING, templates, `.gitignore`, `.gitattributes`, LICENSE, `.mcp.json`, `AGENTS.md`/`CLAUDE.md`/`GEMINI.md`, this coordination system, and spec and plan. It is all workflow tooling with no product code.
 - Third-party components: "None yet".
-- Contributions by agent: one row per PR (PR, agent, summary).
+- Prompt and contribution log: a table with columns PR, agent, main prompt (minus personal data), how verified.
+- Limitations and lessons learned: empty list, filled as we go.
 
 - [ ] **Step 4: Append the ignore block to `.gitignore`**
 
 - [ ] **Step 5: Run the checks**
 
-Same commands as Step 1. Expected: `IGNORED`, a count of at least 6, and `4`.
+Same commands as Step 1. Expected: `IGNORED`, a count of at least 7, and `8`.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add docs/challenge-rules.md docs/AI_USAGE.md .gitignore
+git add docs/challenge-rules.md AI_WORKFLOW.md .gitignore
 git commit -m "Add challenge rules summary and AI usage log"
 ```
 
@@ -113,7 +121,7 @@ git commit -m "Add challenge rules summary and AI usage log"
 ### Task 3: AGENTS.md rulebook and entrypoints
 
 **Files:**
-- Modify: `AGENTS.md` (currently untracked, written by Antigravity). Add sections. Keep the existing text except where named below.
+- Modify: `AGENTS.md` (currently untracked, written by Antigravity). Add sections. Keep the existing text except where named below. In §10 "Stack & Platform", change "API 11/12+" to "API 20 or later (minimum API 20)".
 - Modify: `CLAUDE.md`, whose full content becomes the line `@AGENTS.md` under a one-line comment
 - Modify: `GEMINI.md`, the same
 - Modify: `.github/ISSUE_TEMPLATE/task.md` (add `Depends on:` and `Allowed files (for delegation):` sections)
@@ -121,7 +129,7 @@ git commit -m "Add challenge rules summary and AI usage log"
 **Interfaces:**
 - Produces, in `AGENTS.md`:
   - `## 12. Team & roles`: a table with columns `GitHub login | Human | Role | Agents`. Rows: `sedatsan | Sedat | TBD | Claude Code (lead), Antigravity (worker)` and `yeet30 | Teammate | TBD | Claude Code (lead)`. Also the lines `Prelint reviews PRs: not confirmed` and `Submission deadline: TBD`.
-  - `## 13. Rule boundaries`: R1–R9 copied verbatim from spec §2.
+  - `## 13. Rule boundaries`: R1–R11 copied verbatim from spec §2.
   - `## 14. Coordination routine`: the labels table (spec §4), the ownership table (spec §5), and the steps of `sync`, `next-task`, `request`, `ship`, `delegate` in plain text (spec §6). Each step carries the exact `gh`/`git` commands that Task 4 and Task 5 use.
   - `## 15. Antigravity limits`: spec §7 bullets.
 - Edits to existing text:
@@ -192,10 +200,11 @@ Exact commands (role comes from §12 for `gh api user --jq .login`; `<OTHER>` is
   - Then `gh issue comment <my N> --body "Waiting on #<new>; using mock <path>."`
 - **`/ship`:**
   - Refuse on `main`.
-  - Commit pending changes only if every changed path is in my role's folders, a shared file covered by a contract or chore branch, or `docs/AI_USAGE.md`. Otherwise stop.
+  - Commit pending changes only if every changed path is in my role's folders, a shared file covered by a contract or chore branch, or `AI_WORKFLOW.md`. Otherwise stop.
   - `git fetch origin && git merge --no-edit origin/main`. On a conflict outside my folders, `git merge --abort` and stop.
   - Verify: if `hvigorfile.ts` exists, run `hvigorw assembleHap --no-daemon`. Otherwise record "No build yet (project not scaffolded)".
-  - If `git diff --name-only origin/main...HEAD` includes `oh-package.json5` or new files under `resources/`, then `docs/AI_USAGE.md` must also be in the diff. Otherwise stop.
+  - `AI_WORKFLOW.md` must be in `git diff --name-only origin/main...HEAD` with this PR's prompt-log row. Otherwise add it before pushing.
+  - If the diff adds entries to `requestPermissions` in `module.json5`, the PR body must justify each permission (R11).
   - `git push -u origin HEAD`.
   - `gh pr view --json number,state` to find an existing PR. If none, `gh pr create --base main --title <title> --body` with sections Closes #N, Files touched, Contract changes, Verification, AI usage.
   - Merge gate: `gh pr view <n> --json mergeable,reviews,comments`. It must be `MERGEABLE`, verification must have passed, and Prelint must have posted with no blocking finding. While §12 says `Prelint reviews PRs: not confirmed`, ask the human before merging.
@@ -250,14 +259,14 @@ git commit -m "Add sync, next-task, request and ship commands"
   - Otherwise `git -C ../Beltur-agy status --porcelain` must be empty, then `git -C ../Beltur-agy switch -c agy/<N>-<slug> origin/main`.
 - Run, from inside `../Beltur-agy`: `agy -p "<prompt>" --mode accept-edits --sandbox --print-timeout 20m`. The prompt template is fixed in the file and holds:
   - the issue title, Goal, Done when and Allowed files
-  - R1–R9
+  - R1–R11
   - "Commit only on agy/<N>-<slug>. Never push. Never run gh. Never edit files outside Allowed files. If anything blocks you, stop and report."
 - Review:
   - `git -C ../Beltur-agy status --porcelain`
   - `git -C ../Beltur-agy diff --name-only origin/main` (committed and uncommitted)
   - If any path is outside Allowed files: reject, name the path, `git -C ../Beltur-agy reset --hard origin/main` (Antigravity's own branch only), and comment on the issue (Review Focus 5).
   - Otherwise read the full diff and run the Done-when checks.
-- Accept: commit anything left uncommitted with subject suffix ` (Antigravity)`, add a row to `docs/AI_USAGE.md` under Contributions by agent, then run `/ship` from `../Beltur-agy`. If it's rejected twice, Sedat's Claude does the task itself.
+- Accept: commit anything left uncommitted with subject suffix ` (Antigravity)`, add a row to `AI_WORKFLOW.md` under Prompt and contribution log, then run `/ship` from `../Beltur-agy`. If it's rejected twice, Sedat's Claude does the task itself.
 - Never use `--dangerously-skip-permissions`. If Antigravity is blocked by a permission prompt, report it and do not escalate (R9).
 
 - [ ] **Step 1: Write `delegate.md`**
@@ -269,14 +278,14 @@ Expected: `Preparing worktree (new branch 'agy/dry-run')`
 
 - [ ] **Step 3: Antigravity dry run (read-only)**
 
-Run in `X:\Beltur-agy`: `agy -p "Read AGENTS.md. List rules R1-R9 in one line each, then list everything you must never do as the Antigravity worker. Do not edit any file." --mode plan --sandbox --print-timeout 10m`
-Expected: all nine rules are restated, including "never push", "never run gh" and "never bypass a block". `git -C ../Beltur-agy status --porcelain` is empty afterwards.
+Run in `X:\Beltur-agy`: `agy -p "Read AGENTS.md. List rules R1-R11 in one line each, then list everything you must never do as the Antigravity worker. Do not edit any file." --mode plan --sandbox --print-timeout 10m`
+Expected: all eleven rules are restated, including "never push", "never run gh" and "never bypass a block". `git -C ../Beltur-agy status --porcelain` is empty afterwards.
 If `agy` errors or wants a permission prompt, stop and report it to Sedat. Do not raise its permissions.
 
 - [ ] **Step 4: Test Review Focus 5 (allowlist violation)**
 
 1. In the worktree, create a scratch file outside a pretend allowlist (`echo x > ../Beltur-agy/OUTSIDE.txt`).
-2. Follow the review steps of `delegate.md` with allowlist `docs/AI_USAGE.md`.
+2. Follow the review steps of `delegate.md` with allowlist `AI_WORKFLOW.md`.
 Expected: it rejects and names `OUTSIDE.txt`. Clean up with `rm ../Beltur-agy/OUTSIDE.txt`.
 
 - [ ] **Step 5: Remove the dry-run worktree**
@@ -296,10 +305,9 @@ git commit -m "Add delegate command for Antigravity worker"
 ### Task 6: Docs pointers and ship through the routine
 
 **Files:**
-- Modify: `README.md`: add `## Development workflow` before `## License`. Three sentences: agents follow `AGENTS.md`, tasks are GitHub Issues, AI usage is logged in `docs/AI_USAGE.md`. Fill in the Team table with `@yeet30`.
+- Modify: `README.md`: add `## Development workflow` before `## License`. Three sentences: agents follow `AGENTS.md`, tasks are GitHub Issues, AI usage is documented in `AI_WORKFLOW.md`. Fill in the Team table with `@yeet30`.
 - Modify: `CONTRIBUTING.md`: add one line under "How we work" pointing agents to `AGENTS.md` §14. Remove the "merging your own PR is fine" sentence that conflicts with the merge gate.
-- Modify: `docs/specs/2026-10-03-agent-coordination.md` §11: mark the teammate login as known (`yeet30`, has write access).
-- Modify: `docs/AI_USAGE.md`: add a row for this PR under Contributions by agent.
+- Modify: `AI_WORKFLOW.md`: add a row for this PR under Prompt and contribution log.
 
 - [ ] **Step 1: Make the four edits**
 
@@ -311,7 +319,7 @@ Expected: `CLEAN`.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add README.md CONTRIBUTING.md docs/specs/2026-10-03-agent-coordination.md docs/AI_USAGE.md
+git add README.md CONTRIBUTING.md AI_WORKFLOW.md
 git commit -m "Point docs to the agent workflow and record yeet30"
 ```
 
