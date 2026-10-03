@@ -24,7 +24,7 @@ Do everything here **before writing product code**.
 | Item | Requirement | Sedat (checked 2026-10-03) |
 |------|-------------|----------------------------|
 | Windows | 10 or 11, 64-bit, 16 GB RAM, ~100 GB disk | Windows 11 Pro, 15.8 GB RAM (close other apps while the emulator runs) |
-| Virtualization | **Hyper-V** and **Windows Hypervisor Platform** enabled, then reboot | Both **disabled**. Virtual Machine Platform is enabled |
+| Virtualization | **Hyper-V** and **Windows Hypervisor Platform** enabled, then reboot | Both enabled (rebooted 13:47) OK |
 | Git | on `PATH` | 2.52 OK |
 | Node.js 22+ with npm | on `PATH` (the DevEco CLI needs it) | Node 24.14, npm 11.11 OK |
 | Python 3 | the `python` command works | 3.12.10 OK |
@@ -54,7 +54,7 @@ Paste [`INSTALLATION_PROMPT.md`](https://github.com/onirodeveloper/hackyeah2026-
 
 Restart DevEco Studio and Claude Code afterwards.
 
-**Sedat's status:** the skills, the DevEco CLI 1.3.4 and its patches are done, and both templates are prepared in `%TEMP%\oni-tpl`. Three things wait for DevEco to be installed: the region switch, `devecocli init --skill`, and the template copy.
+**Sedat's status (DevEco 6.1.1.280, default location):** skills, DevEco CLI 1.3.4 and its patches, region switched to CN, `devecocli init --skill` all done. Emulator images and instances are moved to `X:\Huawei\Sdk` and `X:\Huawei\Emulator\deployed` (Device Manager settings). The bundled HarmonyOS SDK (6.3 GB) stays inside the DevEco install folder, since it's part of the installation. Still to do: copy the two templates from `%TEMP%\oni-tpl`.
 
 **macOS (if yeet30 is on a Mac):** the installer is Windows-only. Change the region by hand (FAQ: "How do I switch the DevEco Studio region to China manually?") and install the skills with `npx skills add -g <url> -a claude-code -y`. The DevEco emulator runs only on supported **Apple Silicon** Macs.
 
