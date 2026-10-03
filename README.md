@@ -47,7 +47,7 @@ Beltur/
 | Name | GitHub | Role |
 |------|--------|------|
 | Sedat | [@sedatsan](https://github.com/sedatsan) | _TBD_ |
-| _TBD_ | _TBD_ | _TBD_ |
+| Yiğit | [@yeet30](https://github.com/yeet30) | _TBD_ |
 
 ## How we work
 

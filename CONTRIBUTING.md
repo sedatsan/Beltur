@@ -26,6 +26,27 @@ gh pr create --fill
 - We squash-merge, so each PR becomes one commit on `main`. Merged branches are deleted automatically.
 - If you're both editing the same files, say so in chat before you start.
 
+## Working from a fork
+
+If you don't have write access to `sedatsan/Beltur`, work from your own fork instead.
+Set `origin` to your fork and `upstream` to the main repo:
+
+```bash
+git remote add upstream https://github.com/sedatsan/Beltur.git
+```
+
+Then the daily flow becomes:
+
+```bash
+git switch main
+git pull upstream main
+git push origin main
+git switch -c feat/my-thing
+# ...work, commit often...
+git push -u origin feat/my-thing
+gh pr create --repo sedatsan/Beltur --base main --fill
+```
+
 ## Prelint
 
 [Prelint](https://prelint.com) reviews every PR against our specs and decisions.
